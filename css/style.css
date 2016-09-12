@@ -1,0 +1,89 @@
+body {
+  text-align: center;
+  font-family: 'Cinzel', serif;
+  margin: 0;
+  padding: 0;
+  background-color: black;
+  color: white;
+}
+
+.modal {
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+  margin: 10% auto;
+  border: 1px solid black;
+  width: 80%;
+  max-width: 30em;
+  background-color: black;
+}
+
+#gameScreen {
+  font-size: 0;
+}
+
+.cellRow {
+  white-space: nowrap;
+}
+
+.singleCell, .player, .enemy, .boss, .health, .weapon, .floor, .wall, .darkness {
+  margin: 0;
+  padding: 0;
+  width: 10px;
+  height: 10px;
+  display: inline-block;
+}
+
+.player {
+  background-color: blue;
+}
+
+.enemy {
+  background-color: red;
+}
+
+.boss {
+  background-color: black;
+}
+
+.health {
+  background-color: green;
+}
+
+.weapon {
+  background-color: orange;
+}
+
+.floor {
+  background-color: white;
+}
+
+.wall {
+  background-color: gray;
+}
+
+.darkness {
+  background-color: black;
+}
+
+.displayText {
+  display: inline;
+  margin-right: 3em;
+}
+
+input {
+  font-family: 'Cinzel', serif;
+  cursor: pointer;
+}
+
+#restartGameButton {
+  margin-bottom: 1em;
+}
