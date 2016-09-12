@@ -1,19 +1,5 @@
 "use strict";
 
-// bug - when 2 enemies are in a line next to each other, killing near one will kill both and move player extra cell
-// Also see why when enemy is killed, "floor" part is run
-
-// Template Class
-var ClassName = React.createClass({
-  displayName: "ClassName",
-
-  render: function render() {
-    return React.createElement("div", null);
-  }
-});
-
-// ###########################
-
 var ModalRestartGameButton = React.createClass({
   displayName: "ModalRestartGameButton",
 
@@ -227,20 +213,6 @@ var GameScreen = React.createClass({
   }
 });
 
-var HelpButton = React.createClass({
-  displayName: "HelpButton",
-
-  handleHelpButton: function handleHelpButton() {},
-
-  render: function render() {
-    return React.createElement("input", {
-      id: "helpButton",
-      type: "button",
-      onClick: this.handleHelpButton,
-      value: "Help" });
-  }
-});
-
 var FullApp = React.createClass({
   displayName: "FullApp",
 
@@ -356,7 +328,6 @@ var FullApp = React.createClass({
 
     var cellStatusArray = this.state.cellStatusArr;
     if (newCellStatus === "floor") {
-      console.log("floor");
       cellStatusArray[newRow][newCol] = "player";
       cellStatusArray[this.state.playerRow][this.state.playerCol] = "floor";
 
@@ -375,7 +346,6 @@ var FullApp = React.createClass({
         visibleCells: visibleCellsArr
       });
     } else if (newCellStatus === "enemy") {
-      console.log("enemy");
       var playerAttack = this.state.attack;
       var playerHealth = this.state.health;
       var enemyAttack = 20;
@@ -462,7 +432,6 @@ var FullApp = React.createClass({
         });
       }
     } else if (newCellStatus === "boss") {
-      console.log("boss");
       var playerAttack = this.state.attack;
       var playerHealth = this.state.health;
       var bossAttack = 50;
@@ -517,7 +486,6 @@ var FullApp = React.createClass({
         }
       }
     } else if (newCellStatus === "health") {
-      console.log("health");
       cellStatusArray[newRow][newCol] = "player";
       cellStatusArray[this.state.playerRow][this.state.playerCol] = "floor";
       var healthLevel = this.state.health + 50;
@@ -539,7 +507,6 @@ var FullApp = React.createClass({
         health: healthLevel
       });
     } else if (newCellStatus === "weapon") {
-      console.log("weapon");
       cellStatusArray[newRow][newCol] = "player";
       cellStatusArray[this.state.playerRow][this.state.playerCol] = "floor";
       var weaponLevel = this.state.weapon + 1;
