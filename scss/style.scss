@@ -1,0 +1,106 @@
+$cell-width: 10px;
+$cell-height: 10px;
+
+body {
+  text-align: center;
+  font-family: 'Cinzel', serif;
+  margin: 0;
+  padding: 0;
+  background-color: black;
+  color: white;
+}
+
+.modal {
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+  margin: 10% auto;
+  border: 1px solid black;
+  width: 80%;
+  max-width: 30em;
+  background-color: black;
+}
+
+#gameScreen {
+  font-size: 0;
+  // border: 1px solid black;
+}
+
+.cellRow {
+  white-space: nowrap;
+}
+
+.singleCell {
+  margin: 0;
+  padding: 0;
+  width: $cell-width;
+  height: $cell-height;
+  display: inline-block;
+}
+
+.player {
+  @extend .singleCell;
+  background-color: blue;
+}
+
+.enemy {
+  @extend .singleCell;
+  background-color: red;
+
+}
+
+.boss {
+  @extend .singleCell;
+  background-color: black;
+}
+
+.health {
+  @extend .singleCell;
+  background-color: green;
+}
+
+.weapon {
+  @extend .singleCell;
+  background-color: orange;
+}
+
+.floor {
+  @extend .singleCell;
+  background-color: white;
+}
+
+.wall {
+  @extend .singleCell;
+  background-color: gray;
+}
+
+.darkness {
+  @extend .singleCell;
+  background-color: black;
+}
+
+.displayText {
+  display: inline;
+  margin-right: 3em;
+}
+
+input {
+  font-family: 'Cinzel', serif;
+  cursor: pointer;
+}
+
+#restartGameButton{
+  margin-bottom: 1em;
+}
+
+#toggleDarknessButton {
+  
+}

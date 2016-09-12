@@ -1,0 +1,748 @@
+// bug - when 2 enemies are in a line next to each other, killing near one will kill both and move player extra cell
+// Also see why when enemy is killed, "floor" part is run
+
+
+// Template Class
+let ClassName = React.createClass({
+  render: function () {
+    return (
+      <div>
+      </div>
+    );
+  }
+});
+
+// ###########################
+
+let ModalRestartGameButton = React.createClass({
+  
+  handleRestartButton: function () {
+    this.props.restartLevelButtonClicked();
+  },
+  
+  render: function () {
+    return (
+      <input 
+        id="restartGameButton"
+        type="button"
+        onClick={this.handleRestartButton}
+        value="Restart Game" />
+    );
+  }
+});
+
+let ModalContent = React.createClass({
+  render: function () {
+    return (
+      <div className="modal-content">
+        <p>{this.props.modalContentText}</p>
+        <ModalRestartGameButton 
+          restartLevelButtonClicked={this.props.restartLevelButtonClicked} />
+      </div>
+    );
+  }
+});
+
+let ModalBackground = React.createClass({
+  render: function () {
+    return (
+      <div className="modal" style={this.props.modalStatus} >
+        <ModalContent 
+          modalContentText={this.props.modalContentText}
+          restartLevelButtonClicked={this.props.restartLevelButtonClicked} />
+      </div>
+    );
+  }
+});
+
+let HealthDisplay = React.createClass({
+  render: function () {
+    return (
+      <p className="displayText">Health: {this.props.health}</p>
+    );
+  }
+});
+
+let WeaponDisplay = React.createClass({
+  render: function () {
+    return (
+      <p className="displayText">Weapon: {this.props.weapon}</p>
+    );
+  }
+});
+
+let AttackDisplay = React.createClass({
+  render: function () {
+    return (
+      <p className="displayText">Attack: {this.props.attack}</p>
+    );
+  }
+});
+
+let LevelDisplay = React.createClass({
+  render: function () {
+    return (
+      <p className="displayText">Level: {this.props.level}</p>
+    );
+  }
+});
+
+let NextLevelDisplay = React.createClass({
+  render: function () {
+    return (
+      <p className="displayText">Next Level: {this.props.xpToNext}</p>
+    );
+  }
+});
+
+let ToggleDarknessButton = React.createClass({
+  
+  handleToggleDarknessButton: function () {
+    this.props.darknessButtonClicked();
+  },
+  
+  render: function () {
+    return (
+      <input 
+        id="toggleDarknessButton"
+        type="button"
+        onClick={this.handleToggleDarknessButton}
+        value="Toggle Darkness" />
+    );
+  }
+});
+
+let TopDisplay = React.createClass({
+  render: function () {
+    return (
+      <div>
+        <HealthDisplay 
+          health={this.props.health} />
+        <WeaponDisplay 
+          weapon={this.props.weapon} />
+        <AttackDisplay
+          attack={this.props.attack} />
+        <LevelDisplay 
+          level={this.props.level} />
+        <NextLevelDisplay 
+          xpToNext={this.props.xpToNext} />
+        <ToggleDarknessButton 
+          darknessButtonClicked={this.props.darknessButtonClicked} />
+      </div>
+    );
+  }
+});
+
+let SingleCell = React.createClass({
+  
+  render: function () {
+    let cellStatus = this.props.cellStatusIndivCell;
+    let visibleCellStatus = this.props.visibleIndivCell;
+    
+    return (
+      <div className={visibleCellStatus}></div>
+    );
+  }
+});
+
+let CellRow = React.createClass({
+  
+  render: function () {
+    let numCols = this.props.numCols;
+    let singleRow = [];
+    for (let i=0; i<numCols; i++) {
+      let cellStatusIndivCell = this.props.cellStatusRow[i];
+      let visibleIndivCell = this.props.visibleCellsRow[i];
+      singleRow.push(
+        <SingleCell
+          visibleIndivCell={visibleIndivCell}
+          cellStatusIndivCell={cellStatusIndivCell}
+          rowNum={this.props.rowNum}
+          colNum={i}
+          key={"singlecell" + i} />
+      );
+    }
+    
+    return (
+      <div className="cellRow">
+          {singleRow}
+      </div>
+    );
+  }
+});
+
+let GameScreen = React.createClass({
+  render: function () {
+    let numRows = this.props.numRows;
+    let multipleRows = [];
+    for (let i=0; i<numRows; i++) {
+      let cellStatusRow = this.props.cellStatus[i];
+      let visibleCellsRow = this.props.visibleCellsArr[i];
+      
+      multipleRows.push(
+        <CellRow
+          visibleCellsRow={visibleCellsRow}
+          cellStatusRow={cellStatusRow}
+          numCols={this.props.numCols}
+          rowNum={i}
+          key={"cellrow" + i} />
+      );
+    }
+    return (
+      <div id="gameScreen">
+        {multipleRows}
+      </div>
+    );
+  }
+});
+
+let HelpButton = React.createClass({
+  
+  handleHelpButton: function () {
+    
+  },
+  
+  render: function () {
+    return (
+      <input 
+        id="helpButton"
+        type="button"
+        onClick={this.handleHelpButton}
+        value="Help" />
+    );
+  }
+});
+
+let FullApp = React.createClass({
+  
+  getInitialState: function() {
+    return this.setUpGame();
+    
+  },
+  
+  setUpGame: function () {
+    let rows = 60;
+    let cols = 120;
+    
+    let startingHealth = 500;
+    let startingWeapon = 1;
+    let startingAttack = 10;
+    let startingLevel = 1;
+    let startingXpToNextLevel = 50;
+    
+    let cellStatusObject = this.newMapCellStatus(rows, cols);
+    let cellStatusArray = cellStatusObject.cellStatusArray;
+    let playerCoords = cellStatusObject.playerCoord;
+    
+    // Start with darkness on
+    let visibleCellsArr = this.drawMapWithDarkness(rows, cols, playerCoords[0], playerCoords[1], cellStatusArray);
+
+    return {
+      modalStatus: {display: "none"},
+      modalContentText: null,
+      numRows: rows,
+      numCols: cols,
+      playerRow: playerCoords[0],
+      playerCol: playerCoords[1],
+      cellStatusArr: cellStatusArray,
+      visibleCells: visibleCellsArr,
+      health: startingHealth,
+      weapon: startingWeapon,
+      attack: startingAttack,
+      level: startingLevel,
+      xpToNext: startingXpToNextLevel,
+      enemies: [],
+      bossHealth: 300,
+      darknessOn: true
+    };
+  },
+  
+  componentWillMount: function() {
+    // This is needed so keydown 
+    // window.focus();
+    document.addEventListener("keydown", this.handleArrowKeys, false);
+    
+    // Disable page scroll using keys
+    document.addEventListener("keydown", function(e) {
+      // 32 is space, rest are arrow keys
+      if([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
+        e.preventDefault();
+      }
+    }, false);
+  },
+  
+  componentWillUnmount: function() {
+    document.removeEventListener("keydown", this.handleArrowKeys, false);
+  },
+  
+  handleArrowKeys: function(e) {
+    let row = this.state.playerRow;
+    let col = this.state.playerCol;
+    let cellStatus = this.state.cellStatusArr;
+    
+    if (e.keyCode === 38) {
+      // Move up
+      // Check if not at topmost row and up is not a wall
+      if (row > 0 && cellStatus[row-1][col] != "wall") {
+        let newCellStatus = cellStatus[row-1][col];
+        this.moveToNewCell(row-1, col, newCellStatus);
+      }
+    }
+    else if (e.keyCode === 40) {
+      // Move down
+      if (row < this.state.numRows - 1 && cellStatus[row+1][col] != "wall") {
+        let newCellStatus = cellStatus[row+1][col];
+        this.moveToNewCell(row+1, col, newCellStatus);
+      }
+    }
+    else if (e.keyCode === 37) {
+      // Move left
+      if (col > 0 && cellStatus[row][col-1] != "wall") {
+        let newCellStatus = cellStatus[row][col-1];
+        this.moveToNewCell(row, col-1, newCellStatus);
+      }
+    }
+    else if (e.keyCode === 39) {
+      // Move right
+      if (col < this.state.numCols - 1 && cellStatus[row][col+1] != "wall") {
+        let newCellStatus = cellStatus[row][col+1];
+        this.moveToNewCell(row, col+1, newCellStatus);
+      }
+      
+    }
+    
+  },
+  
+  moveToNewCell: function (newRow, newCol, newCellStatus) {
+    
+    function playerLose (that, playerHealth) {
+      // Turn keydown event off
+      document.removeEventListener("keydown", that.handleArrowKeys, false);
+      that.setState({
+        modalStatus: {display: "block"},
+        modalContentText: "You Lose!",
+        health: playerHealth
+      });
+    };
+    
+    function attackRandomRange(attack) {
+      let percentageOfAttack = attack * 0.2;
+      let randomDamage = Math.floor(Math.random() * percentageOfAttack) + 1;
+      return attack + randomDamage;
+    };
+    
+    let cellStatusArray = this.state.cellStatusArr;
+    if (newCellStatus === "floor") {
+      console.log("floor");
+      cellStatusArray[newRow][newCol] = "player";
+      cellStatusArray[this.state.playerRow][this.state.playerCol] = "floor";
+      
+      let visibleCellsArr;
+      if (this.state.darknessOn === true) {
+        // If darkness is on, draw map with darkness
+        visibleCellsArr = this.drawMapWithDarkness(this.state.numRows, this.state.numCols, newRow, newCol, cellStatusArray);
+      }
+      else {
+        // If darkness is off, don't draw map with darkness
+        visibleCellsArr = cellStatusArray;
+      }
+      this.setState({
+        playerRow: newRow,
+        playerCol: newCol,
+        cellStatusArr: cellStatusArray,
+        visibleCells: visibleCellsArr
+      });
+    }
+    else if (newCellStatus === "enemy") {
+      console.log("enemy");
+      let playerAttack = this.state.attack;
+      let playerHealth = this.state.health;
+      let enemyAttack = 20;
+      let playerAttackRange = attackRandomRange(playerAttack);
+      let enemyAttackRange = attackRandomRange(enemyAttack);
+      
+      let enemyInList = false;
+      let enemyList = this.state.enemies;
+      let visibleCellsArr;
+      if (this.state.darknessOn === true) {
+        // Draw map with darkness, but with current player row and col since we didn't move yet because enemy is still alive
+        visibleCellsArr = this.drawMapWithDarkness(this.state.numRows, this.state.numCols, this.state.playerRow, this.state.playerCol, cellStatusArray);
+      }
+      else {
+        visibleCellsArr = cellStatusArray;
+      }
+      
+      for (let i=0; i<enemyList.length; i++) {
+        if (enemyList[i].row === newRow && enemyList[i].col == newCol) {
+          enemyInList = true;
+          let currentEnemy = enemyList[i];
+          currentEnemy.health -= playerAttackRange;
+          if (currentEnemy.health <= 0) {
+            let xpReward = 40;
+            let xpPerLevel = 50;
+            let hpGainForLevelUp = 100;
+            let attackGainForLevelUp = 10;
+            
+            let xpToNextLevel = this.state.xpToNext;
+            let playerLevel = this.state.level;
+            xpToNextLevel -= xpReward;
+            if (xpToNextLevel <= 0) {
+              // Level up
+              playerLevel++;
+              let totalXpNeededForNextLevel = playerLevel * xpPerLevel;
+              xpToNextLevel += totalXpNeededForNextLevel;
+              playerHealth += hpGainForLevelUp;
+              playerAttack += attackGainForLevelUp;
+            }
+            // Set cell where player used to be to floor
+            cellStatusArray[this.state.playerRow][this.state.playerCol] = "floor";
+            // Enemy is dead so move player to where enemy used to be.
+            cellStatusArray[newRow][newCol] = "player";
+            
+            if (this.state.darknessOn === true) {
+              // If darkness is on, draw map with darkness
+              visibleCellsArr = this.drawMapWithDarkness(this.state.numRows, this.state.numCols, newRow, newCol, cellStatusArray);
+            }
+            else {
+              // If darkness is off, don't draw map with darkness
+              visibleCellsArr = cellStatusArray;
+            }
+            
+            // Set player coords to where enemy used to be only if enemy is dead
+            this.setState({
+              playerRow: newRow,
+              playerCol: newCol,
+              level: playerLevel,
+              xpToNext: xpToNextLevel,
+              health: playerHealth,
+              attack: playerAttack
+            });
+            // Remove current enemy from enemy list array
+            enemyList.splice(i, 1);
+          }
+        }
+      }
+      if (!enemyInList) {
+        let enemyHealth = 50 - playerAttackRange;
+        let newEnemy = {
+          row: newRow,
+          col: newCol,
+          health: enemyHealth
+        }
+        enemyList.push(newEnemy);
+      }
+      playerHealth -= enemyAttackRange;
+      if (playerHealth <= 0) {
+        playerLose(this, playerHealth);
+      }
+      else {
+        this.setState({
+          cellStatusArr: cellStatusArray,
+          visibleCells: visibleCellsArr,
+          health: playerHealth,
+          enemies: enemyList
+        });
+      }
+    }
+    else if (newCellStatus === "boss") {
+      console.log("boss");
+      let playerAttack = this.state.attack;
+      let playerHealth = this.state.health;
+      let bossAttack = 50;
+      let playerAttackRange = attackRandomRange(playerAttack);
+      let bossAttackRange = attackRandomRange(bossAttack);
+      let bossHealth = this.state.bossHealth - playerAttackRange;
+      let bossDead = false;
+      
+      let visibleCellsArr;
+      if (this.state.darknessOn === true) {
+        visibleCellsArr = this.drawMapWithDarkness(this.state.numRows, this.state.numCols, this.state.playerRow, this.state.playerCol, cellStatusArray);
+      }
+      else {
+        visibleCellsArr = cellStatusArray;
+      }
+      
+      if (bossHealth <= 0) {
+        bossDead = true;
+        // Turn keydown event off
+        document.removeEventListener("keydown", that.handleArrowKeys, false);
+        // Set cell where player used to be to floor
+        cellStatusArray[this.state.playerRow][this.state.playerCol] = "floor";
+        // Boss is dead so move player to where boss used to be.
+        cellStatusArray[newRow][newCol] = "player";
+        
+        if (this.state.darknessOn === true) {
+          // If darkness is on, draw map with darkness
+          visibleCellsArr = this.drawMapWithDarkness(this.state.numRows, this.state.numCols, newRow, newCol, cellStatusArray);
+        }
+        else {
+          // If darkness is off, don't draw map with darkness
+          visibleCellsArr = cellStatusArray;
+        }
+        
+        // Set player coords to where boss used to be only if boss is dead
+        this.setState({
+          modalStatus: {display: "block"},
+          modalContentText: "You Win!",
+          playerRow: newRow,
+          playerCol: newCol,
+        });
+        
+        
+      }
+      if (!bossDead) {
+        playerHealth -= bossAttackRange;
+        if (playerHealth <= 0) {
+          playerLose(this, playerHealth);
+        }
+        else {
+          this.setState({
+            cellStatusArr: cellStatusArray,
+            visibleCells: visibleCellsArr,
+            health: playerHealth,
+            bossHealth: bossHealth
+          });
+        }
+      }
+    }
+    else if (newCellStatus === "health") {
+      console.log("health");
+      cellStatusArray[newRow][newCol] = "player";
+      cellStatusArray[this.state.playerRow][this.state.playerCol] = "floor";
+      let healthLevel = this.state.health + 50;
+      
+      let visibleCellsArr;
+      if (this.state.darknessOn === true) {
+        // If darkness is on, draw map with darkness
+        visibleCellsArr = this.drawMapWithDarkness(this.state.numRows, this.state.numCols, newRow, newCol, cellStatusArray);
+      }
+      else {
+        // If darkness is off, don't draw map with darkness
+        visibleCellsArr = cellStatusArray;
+      }
+      
+      this.setState({
+        playerRow: newRow,
+        playerCol: newCol,
+        cellStatusArr: cellStatusArray,
+        visibleCells: visibleCellsArr,
+        health: healthLevel
+      });
+    }
+    else if (newCellStatus === "weapon") {
+      console.log("weapon");
+      cellStatusArray[newRow][newCol] = "player";
+      cellStatusArray[this.state.playerRow][this.state.playerCol] = "floor";
+      let weaponLevel = this.state.weapon + 1;
+      let attackLevel = this.state.attack + 10;
+      
+      let visibleCellsArr;
+      if (this.state.darknessOn === true) {
+        // If darkness is on, draw map with darkness
+        visibleCellsArr = this.drawMapWithDarkness(this.state.numRows, this.state.numCols, newRow, newCol, cellStatusArray);
+      }
+      else {
+        // If darkness is off, don't draw map with darkness
+        visibleCellsArr = cellStatusArray;
+      }
+      
+      this.setState({
+        playerRow: newRow,
+        playerCol: newCol,
+        cellStatusArr: cellStatusArray,
+        visibleCells: visibleCellsArr,
+        weapon: weaponLevel,
+        attack: attackLevel
+      });
+    }
+  },
+  
+  newMapCellStatus: function(numRow, numCol) {
+    let cellStatusArr = [];
+    // Create empty map filled with walls
+    for (let i=0; i<numRow; i++) {
+      let row = [];
+      for (let j=0; j<numCol; j++) {
+        row.push("wall");
+      }
+      cellStatusArr.push(row);
+    }
+    
+    // Draw floor by digging from middle
+    let midRow = Math.round(numRow / 2);
+    let midCol = Math.round(numCol / 2);
+    // Total number of floor cells
+    let numFloorCells = Math.round(numRow * numCol / 3);
+    
+    // Start with a floor cell in the middle
+    cellStatusArr[midRow][midCol] = "floor";
+    numFloorCells--;
+    
+    let currRow = midRow;
+    let currCol = midCol;
+    while (numFloorCells > 0) {
+      let randNum = Math.floor(Math.random() * 4);
+      
+      if (randNum === 0 && currRow > 0) {
+        // Move up
+        currRow--;
+        if (cellStatusArr[currRow][currCol] !== "floor") {
+          cellStatusArr[currRow][currCol] = "floor";
+          numFloorCells--;
+        }
+      }
+      else if (randNum === 1 && currCol < numCol-1) {
+        // Move right
+        currCol++;
+        if (cellStatusArr[currRow][currCol] !== "floor") {
+          cellStatusArr[currRow][currCol] = "floor";
+          numFloorCells--;
+        }
+      }
+      else if (randNum === 2 && currRow < numRow-1) {
+        // Move down
+        currRow++;
+        if (cellStatusArr[currRow][currCol] !== "floor") {
+          cellStatusArr[currRow][currCol] = "floor";
+          numFloorCells--;
+        }
+      }
+      else if (randNum === 3 && currCol > 0) {
+        // Move left
+        currCol--;
+        if (cellStatusArr[currRow][currCol] !== "floor") {
+          cellStatusArr[currRow][currCol] = "floor";
+          numFloorCells--;
+        }
+      }
+    }
+    
+    // Place different cells
+    function placeCells (type, numCells) {
+      while (numCells > 0) {
+        currRow = Math.floor(Math.random() * numRow);
+        currCol = Math.floor(Math.random() * numCol);
+        if (cellStatusArr[currRow][currCol] === "floor") {
+          cellStatusArr[currRow][currCol] = type;
+          numCells--;
+        }
+      }
+    }
+    
+    // Place player cell and return player coords
+    function placePlayerCell (numCells) {
+      let playerCoords = [];
+      while (numCells > 0) {
+        currRow = Math.floor(Math.random() * numRow);
+        currCol = Math.floor(Math.random() * numCol);
+        if (cellStatusArr[currRow][currCol] === "floor") {
+          cellStatusArr[currRow][currCol] = "player";
+          playerCoords.push(currRow);
+          playerCoords.push(currCol);
+          numCells--;
+        }
+      }
+      return playerCoords;
+    }
+    
+    // Place different cells
+    let playerCoordinates = placePlayerCell(1);
+    placeCells("boss", 1);
+    placeCells("enemy", 20);
+    placeCells("health", 10);
+    placeCells("weapon", 5);
+    
+    let dataToReturn = {
+      playerCoord: playerCoordinates,
+      cellStatusArray: cellStatusArr
+    }
+    
+    return dataToReturn;
+  },
+  
+  drawMapWithDarkness: function (rows, cols, playerRow, playerCol, cellStatusArray) {
+    let visibleCellsArr = [];
+    // Draw map with all black cells
+    for (let i=0; i<rows; i++) {
+      let row = [];
+      for (let j=0; j<cols; j++) {
+        row.push("darkness");
+      }
+      visibleCellsArr.push(row);
+    }
+    // Draw only the visible part around player
+    let visibleBoxLength = 8;
+    for (let i=0; i<=visibleBoxLength; i++) {
+      for (let j=0; j<visibleBoxLength; j++) {
+        if (cellStatusArray[playerRow + i] !== undefined && cellStatusArray[playerRow + i][playerCol + j] !== undefined) {
+          visibleCellsArr[playerRow + i][playerCol + j] = cellStatusArray[playerRow + i][playerCol + j]
+        }
+        if (cellStatusArray[playerRow - i] !== undefined && cellStatusArray[playerRow - i][playerCol - j] !== undefined) {
+          visibleCellsArr[playerRow - i][playerCol - j] = cellStatusArray[playerRow - i][playerCol - j]
+        }
+        if (cellStatusArray[playerRow + i] !== undefined && cellStatusArray[playerRow + i][playerCol - j] !== undefined) {
+          visibleCellsArr[playerRow + i][playerCol - j] = cellStatusArray[playerRow + i][playerCol - j]
+        }
+        if (cellStatusArray[playerRow - i] !== undefined && cellStatusArray[playerRow - i][playerCol + j] !== undefined) {
+          visibleCellsArr[playerRow - i][playerCol + j] = cellStatusArray[playerRow - i][playerCol + j]
+        }
+      }
+    }
+    return visibleCellsArr;
+  },
+  
+  restartLevelButtonClicked: function() {
+    this.setState(this.setUpGame());
+    // Turn keys back on
+    document.addEventListener("keydown", this.handleArrowKeys, false);
+  },
+  
+  darknessButtonClicked: function () {
+    
+    if (this.state.darknessOn === true) {
+      // Turn darkness off by setting visible cells array to the cell array with no darkness
+      let visibleCellsArray = this.state.cellStatusArr;
+      this.setState({
+        darknessOn: false,
+        visibleCells: visibleCellsArray
+      });
+    }
+    else {
+      // Turn darkness on
+      let visibleCellsArray = this.drawMapWithDarkness(this.state.numRows, this.state.numCols, this.state.playerRow, this.state.playerCol, this.state. cellStatusArr);
+      this.setState({
+        darknessOn: true,
+        visibleCells: visibleCellsArray
+      });
+    }
+    
+  },
+  
+  render: function () {
+    return (
+      <div id="fullApp">
+        <ModalBackground
+          modalStatus={this.state.modalStatus}
+          modalContentText={this.state.modalContentText}
+          restartLevelButtonClicked={this.restartLevelButtonClicked} />
+        <TopDisplay 
+          health={this.state.health}
+          weapon={this.state.weapon}
+          attack={this.state.attack} 
+          level={this.state.level}
+          xpToNext={this.state.xpToNext}
+          darknessButtonClicked={this.darknessButtonClicked} />
+        <GameScreen
+          numRows={this.state.numRows} 
+          numCols={this.state.numCols}
+          visibleCellsArr={this.state.visibleCells}
+          cellStatus={this.state.cellStatusArr} />
+      </div>
+    );
+  }
+});
+
+ReactDOM.render(
+  <FullApp />,
+  document.getElementById('app')
+);
