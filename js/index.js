@@ -259,7 +259,7 @@ var FullApp = React.createClass({
 
   componentWillMount: function componentWillMount() {
     // This is needed so keydown
-    // window.focus();
+    window.focus();
     document.addEventListener("keydown", this.handleArrowKeys, false);
 
     // Disable page scroll using keys
