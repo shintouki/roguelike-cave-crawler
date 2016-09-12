@@ -1,3 +1,12 @@
-A Pen created at CodePen.io. You can find this one at http://codepen.io/InstantMizu/pen/rLgaXW.
+Roguelike Cave Crawler
 
- 
+https://shintouki.github.io/roguelike-cave-crawler/
+
+Use arrow keys to move.
+Blue: Player
+Red: Enemy
+Black: Boss
+Green: Health
+Orange: Weapon
+White: Floor
+Gray: Wall
