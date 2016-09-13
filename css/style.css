@@ -4,8 +4,7 @@ body {
   margin: 0;
   padding: 0;
   background-color: black;
-  color: white;
-}
+  color: white; }
 
 .modal {
   position: fixed;
@@ -15,76 +14,67 @@ body {
   width: 100%;
   height: 100%;
   overflow: auto;
-  background-color: rgba(0, 0, 0, 0.4);
-}
+  background-color: rgba(0, 0, 0, 0.4); }
 
 .modal-content {
   margin: 10% auto;
   border: 1px solid black;
   width: 80%;
   max-width: 30em;
-  background-color: black;
-}
+  background-color: black; }
 
 #gameScreen {
-  font-size: 0;
-}
+  font-size: 0; }
 
 .cellRow {
-  white-space: nowrap;
-}
+  white-space: nowrap; }
 
 .singleCell, .player, .enemy, .boss, .health, .weapon, .floor, .wall, .darkness {
   margin: 0;
   padding: 0;
   width: 10px;
   height: 10px;
-  display: inline-block;
-}
+  display: inline-block; }
 
 .player {
-  background-color: blue;
-}
+  background-color: blue; }
 
 .enemy {
-  background-color: red;
-}
+  background-color: red; }
 
 .boss {
-  background-color: black;
-}
+  background-color: black; }
 
 .health {
-  background-color: green;
-}
+  background-color: green; }
 
 .weapon {
-  background-color: orange;
-}
+  background-color: orange; }
 
 .floor {
-  background-color: white;
-}
+  background-color: white; }
 
 .wall {
-  background-color: gray;
-}
+  background-color: gray; }
 
 .darkness {
-  background-color: black;
-}
+  background-color: black; }
 
 .displayText {
   display: inline;
-  margin-right: 3em;
-}
+  margin-right: 3em; }
 
 input {
   font-family: 'Cinzel', serif;
-  cursor: pointer;
-}
+  cursor: pointer; }
 
 #restartGameButton {
-  margin-bottom: 1em;
-}
+  margin-bottom: 1em; }
 
+#author {
+  margin-top: 2em; }
+  #author a {
+    text-decoration: none;
+    color: #33FFFF; }
+
+/*# sourceMappingURL=style.css.map */
