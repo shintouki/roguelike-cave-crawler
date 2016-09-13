@@ -450,7 +450,7 @@ var FullApp = React.createClass({
       if (bossHealth <= 0) {
         bossDead = true;
         // Turn keydown event off
-        document.removeEventListener("keydown", that.handleArrowKeys, false);
+        document.removeEventListener("keydown", this.handleArrowKeys, false);
         // Set cell where player used to be to floor
         cellStatusArray[this.state.playerRow][this.state.playerCol] = "floor";
         // Boss is dead so move player to where boss used to be.
