@@ -10,3 +10,6 @@ Green: Health
 Orange: Weapon
 White: Floor
 Gray: Wall
+
+Kill boss to win.
+Toggle darkness with button on upper right.
