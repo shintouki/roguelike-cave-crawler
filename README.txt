@@ -1,6 +1,6 @@
 Roguelike Cave Crawler
 
-https://shintouki.github.io/roguelike-cave-crawler/
+https://tshin1.github.io/roguelike-cave-crawler/
 
 Use arrow keys to move.
 Blue: Player
