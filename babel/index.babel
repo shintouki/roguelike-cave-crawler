@@ -1,3 +1,6 @@
+// JSX is used in this file and it is later converted to regular javascript using
+// the babel cli and babel react preset packages.
+
 let ModalRestartGameButton = React.createClass({
   
   handleRestartButton: function () {
@@ -96,6 +99,7 @@ let ToggleDarknessButton = React.createClass({
   }
 });
 
+// Top display (health, weapon, attack, level, next level, toggle darkness button)
 let TopDisplay = React.createClass({
   render: function () {
     return (
@@ -117,6 +121,7 @@ let TopDisplay = React.createClass({
   }
 });
 
+// Each cell is a react component
 let SingleCell = React.createClass({
   
   render: function () {
@@ -129,6 +134,7 @@ let SingleCell = React.createClass({
   }
 });
 
+// I divided the game board into rows of cells
 let CellRow = React.createClass({
   
   render: function () {
@@ -155,6 +161,7 @@ let CellRow = React.createClass({
   }
 });
 
+// This is the entire game screen/board.
 let GameScreen = React.createClass({
   render: function () {
     let numRows = this.props.numRows;
@@ -180,6 +187,7 @@ let GameScreen = React.createClass({
   }
 });
 
+// Help button isn't implemented yet.
 let HelpButton = React.createClass({
   
   handleHelpButton: function () {
@@ -197,17 +205,20 @@ let HelpButton = React.createClass({
   }
 });
 
+// This is the main top component.
 let FullApp = React.createClass({
-  
+  // Initial state values
   getInitialState: function() {
     return this.setUpGame();
     
   },
   
   setUpGame: function () {
+    // Number of rows and column cells.
     let rows = 60;
     let cols = 120;
     
+    // Starting attribute values
     let startingHealth = 500;
     let startingWeapon = 1;
     let startingAttack = 10;
@@ -541,6 +552,8 @@ let FullApp = React.createClass({
     }
   },
   
+  // Set up new board/map. Also randomly generate map.
+  // Map starts as all walls. Then starting from the middle, you start 'digging'.
   newMapCellStatus: function(numRow, numCol) {
     let cellStatusArr = [];
     // Create empty map filled with walls
@@ -555,7 +568,7 @@ let FullApp = React.createClass({
     // Draw floor by digging from middle
     let midRow = Math.round(numRow / 2);
     let midCol = Math.round(numCol / 2);
-    // Total number of floor cells
+    // Total number of floor cells (white colored cells)
     let numFloorCells = Math.round(numRow * numCol / 3);
     
     // Start with a floor cell in the middle
@@ -565,8 +578,12 @@ let FullApp = React.createClass({
     let currRow = midRow;
     let currCol = midCol;
     while (numFloorCells > 0) {
+      // Get a random number to choose a cardinal direction to move.
       let randNum = Math.floor(Math.random() * 4);
       
+      // Additional checks are for when you are near a border.
+      // For example, you have to check if currRow is > 0 because if currRow is
+      // <= 0, you are at the top row, so you cannot move up.
       if (randNum === 0 && currRow > 0) {
         // Move up
         currRow--;
@@ -601,7 +618,7 @@ let FullApp = React.createClass({
       }
     }
     
-    // Place different cells
+    // Generate different cells to replace only some floor cells.
     function placeCells (type, numCells) {
       while (numCells > 0) {
         currRow = Math.floor(Math.random() * numRow);
@@ -629,12 +646,14 @@ let FullApp = React.createClass({
       return playerCoords;
     }
     
-    // Place different cells
+    // Generate 1 player cell
     let playerCoordinates = placePlayerCell(1);
-    placeCells("boss", 1);
-    placeCells("enemy", 20);
-    placeCells("health", 10);
-    placeCells("weapon", 5);
+
+    // Generate other types of cells
+    placeCells("boss", 1);    // Generate 1 boss cell
+    placeCells("enemy", 20);  // Generate 20 enemy cells
+    placeCells("health", 10); // Generate 10 health cells
+    placeCells("weapon", 5);  // Generate 5 weapon cells
     
     let dataToReturn = {
       playerCoord: playerCoordinates,
@@ -646,7 +665,7 @@ let FullApp = React.createClass({
   
   drawMapWithDarkness: function (rows, cols, playerRow, playerCol, cellStatusArray) {
     let visibleCellsArr = [];
-    // Draw map with all black cells
+    // First draw map with all black cells
     for (let i=0; i<rows; i++) {
       let row = [];
       for (let j=0; j<cols; j++) {
@@ -654,7 +673,9 @@ let FullApp = React.createClass({
       }
       visibleCellsArr.push(row);
     }
-    // Draw only the visible part around player
+    // Draw only the visible part around player.
+    // cellStatusArray contains data about the actual cell types on the map
+    // visibleCellsArr is the board that the user sees, with darkness (black) cells.
     let visibleBoxLength = 8;
     for (let i=0; i<=visibleBoxLength; i++) {
       for (let j=0; j<visibleBoxLength; j++) {
@@ -692,8 +713,8 @@ let FullApp = React.createClass({
       });
     }
     else {
-      // Turn darkness on
-      let visibleCellsArray = this.drawMapWithDarkness(this.state.numRows, this.state.numCols, this.state.playerRow, this.state.playerCol, this.state. cellStatusArr);
+      // Turn darkness on.
+      let visibleCellsArray = this.drawMapWithDarkness(this.state.numRows, this.state.numCols, this.state.playerRow, this.state.playerCol, this.state.cellStatusArr);
       this.setState({
         darknessOn: true,
         visibleCells: visibleCellsArray
