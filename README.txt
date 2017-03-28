@@ -2,6 +2,8 @@ Roguelike Cave Crawler
 
 https://tshin1.github.io/roguelike-cave-crawler/
 
+Tech Stack: React.js
+
 Use arrow keys to move.
 Blue: Player
 Red: Enemy
