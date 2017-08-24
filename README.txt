@@ -1,6 +1,6 @@
 Roguelike Cave Crawler
 
-https://tshin1.github.io/roguelike-cave-crawler/
+https://tshin7.github.io/roguelike-cave-crawler/
 
 Tech Stack: React.js
 
